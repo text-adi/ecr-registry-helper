@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check
         run: |
-          docker run --rm -i ghcr.io/hadolint/hadolint < Dockerfile
+          docker run --rm -i -v ./hadolint.yaml:/.config/hadolint.yaml ghcr.io/hadolint/hadolint < Dockerfile
 
   lint-entrypoint:
     needs: [ vars ]

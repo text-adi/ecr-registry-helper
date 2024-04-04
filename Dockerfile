@@ -1,5 +1,6 @@
 ARG BASE_IMAGE
 
+# hadolint ignore=DL3006
 FROM $BASE_IMAGE as builder
 
 COPY --chown=root:root --chmod=700 entrypoint /

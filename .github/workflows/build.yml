@@ -42,9 +42,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check
-        working-directory: entrypoint
-        run: |
-          find . -name "*.sh" -exec bash -n {} \; || exit 1
+        uses: ludeeus/action-shellcheck@master
+        with:
+          version: v2.0.0
 
   build_and_push:
     needs: [ vars, lint-dockerfile, lint-entrypoint ]

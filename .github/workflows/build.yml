@@ -23,8 +23,8 @@ jobs:
       - name: Get version
         id: _tmp_last_tag
         env:
-          DOCKERHUB_REPO: ...
-          DOCKERHUB_IMAGE: ...
+          DOCKERHUB_REPO: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_IMAGE: ${{ vars.APP_NAME }}
         run: |
           version=$(curl -L --fail "https://hub.docker.com/v2/repositories/${DOCKERHUB_REPO}/${DOCKERHUB_IMAGE}/tags/?page_size=1000" | \
           	jq '.results | .[] | .name' -r | \
@@ -86,6 +86,8 @@ jobs:
           push: true
           provenance: false
           target: local
+          build-args: |
+            BASE_IMAGE=${{ vars.BASE_IMAGE }}
           tags: |
             ${{ steps.image_tag.outputs.value }}
           cache-from: type=gha

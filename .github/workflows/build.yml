@@ -23,10 +23,9 @@ jobs:
       - name: Get version
         id: _tmp_last_tag
         env:
-          DOCKERHUB_REPO: ${{ secrets.DOCKER_USERNAME }}
-          DOCKERHUB_IMAGE: ${{ vars.APP_NAME }}
+          DOCKERHUB_IMAGE: ${{ vars.BASE_IMAGE }}
         run: |
-          version=$(curl -L --fail "https://hub.docker.com/v2/repositories/${{ env.DOCKERHUB_REPO }}/${{ env.DOCKERHUB_IMAGE }}/tags/?page_size=1000" | \
+          version=$(curl -L --fail "https://hub.docker.com/v2/repositories/${{ env.DOCKERHUB_IMAGE }}/tags/?page_size=1000" | \
           	jq '.results | .[] | .name' -r | \
           	sed 's/latest//' | \
           	sort --version-sort | \

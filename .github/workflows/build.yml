@@ -1,0 +1,80 @@
+name: Build
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build.yml'
+  schedule:
+    - cron: '0 0 * * *' # every day in 00:00
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
+jobs:
+  vars:
+    name: Generation vars
+    runs-on: ubuntu-latest
+    outputs:
+      prefix-test: ${{ steps.basic.outputs.prefix_test }}
+    steps:
+      - name: Create basic vars
+        id: basic
+        run: |
+          echo "prefix_test=test" >> $GITHUB_OUTPUT
+
+  lint-dockerfile:
+    needs: [ vars ]
+    name: Test dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check
+        run: |
+          docker run --rm -i ghcr.io/hadolint/hadolint < Dockerfile
+
+  lint-entrypoint:
+    needs: [ vars ]
+    name: Test bash script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check
+        working-directory: entrypoint
+        run: |
+          find . -name "*.sh" -exec bash -n {} \; || exit 1
+
+  build_and_push:
+    needs: [ vars, lint-dockerfile, lint-entrypoint ]
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set test prefix
+        id: tag
+        run: |
+          echo "test=${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}:${{ needs.vars.outputs.prefix-test }}" >> $GITHUB_OUTPUT
+
+      - name: Build docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          file: Dockerfile
+          load: true
+          provenance: false
+          target: local
+          tags: |
+            ${{ steps.tag.outputs.test }}
+          cache-to: type=gha,mode=max

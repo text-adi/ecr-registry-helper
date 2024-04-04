@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        BASE_IMAGE: textadi/aws-kubectl:2.15.35-1.29.3
+    environment:
+      DEBUG: true
+      NAMESPACE_NAME: "default"
+      AWS_ACCOUNT: "test"
+      ECR_TOKEN: "test"
+      AWS_ACCESS_KEY_ID: "test"
+      AWS_SECRET_ACCESS_KEY: "test"
+
+    tty: true

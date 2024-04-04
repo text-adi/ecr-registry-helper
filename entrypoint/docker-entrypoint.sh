@@ -12,8 +12,7 @@ for file in /entrypoint.d/*; do
       echo "** Execute - $file **"
     fi
 
-    # shellcheck disable=SC2039
     # shellcheck disable=SC1090
-    source "$file"
+    . "$file"
   fi
 done

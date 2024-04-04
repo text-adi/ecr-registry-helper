@@ -86,7 +86,7 @@ jobs:
           provenance: false
           target: local
           build-args: |
-            BASE_IMAGE=${{ vars.BASE_IMAGE }}:${{ needs.vars.outputs.prefix-latest }
+            BASE_IMAGE=${{ vars.BASE_IMAGE }}:${{ needs.vars.outputs.prefix-latest }}
           tags: |
             ${{ steps.image_tag.outputs.value }}
           cache-from: type=gha

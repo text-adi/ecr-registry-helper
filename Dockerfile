@@ -7,6 +7,8 @@ COPY --chown=root:root --chmod=700 entrypoint /
 
 FROM builder as local
 
+ARG BASE_IMAGE
+
 LABEL version="$BASE_IMAGE"
 LABEL repository="https://github.com/text-adi/ecr-registry-helper"
 LABEL homepage="https://github.com/text-adi"

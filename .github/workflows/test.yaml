@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/test.yml'
   workflow_dispatch:
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.workflow_call.workflow_file }}

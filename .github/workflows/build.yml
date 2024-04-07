@@ -35,13 +35,13 @@ jobs:
         run: |
           echo "last_tag=${{ steps._tmp_last_tag.outputs.value }}" >> $GITHUB_OUTPUT
 
-  run-test:
+  test:
     needs: [ vars ]
     name: Run test
     uses: ./.github/workflows/test.yaml
 
   build-and-push:
-    needs: [ vars, lint-dockerfile, lint-entrypoint ]
+    needs: [ vars, test ]
     name: Build
     runs-on: ubuntu-latest
     steps:

@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  push:
+    paths:
+      - '.github/workflows/test.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.workflow_call.workflow_file }}
+  cancel-in-progress: true
+
+
+jobs:
+  lint-dockerfile:
+    name: Test dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check
+        run: |
+          docker run --rm -i -v ./hadolint.yaml:/.config/hadolint.yaml ghcr.io/hadolint/hadolint < Dockerfile
+
+  lint-entrypoint:
+    name: Test bash script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check
+        uses: ludeeus/action-shellcheck@master

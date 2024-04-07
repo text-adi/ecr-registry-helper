@@ -9,9 +9,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.workflow_call.workflow_file }}
   cancel-in-progress: true
-
 
 jobs:
   vars:
@@ -35,28 +34,13 @@ jobs:
         id: basic
         run: |
           echo "last_tag=${{ steps._tmp_last_tag.outputs.value }}" >> $GITHUB_OUTPUT
-          
 
-  lint-dockerfile:
+  run-test:
     needs: [ vars ]
-    name: Test dockerfile
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check
-        run: |
-          docker run --rm -i -v ./hadolint.yaml:/.config/hadolint.yaml ghcr.io/hadolint/hadolint < Dockerfile
+    name: Run test
+    uses: ./.github/workflows/test.yaml
 
-  lint-entrypoint:
-    needs: [ vars ]
-    name: Test bash script
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check
-        uses: ludeeus/action-shellcheck@master
-
-  build_and_push:
+  build-and-push:
     needs: [ vars, lint-dockerfile, lint-entrypoint ]
     name: Build
     runs-on: ubuntu-latest

@@ -39,6 +39,9 @@ jobs:
     needs: [ vars ]
     name: Run test
     uses: ./.github/workflows/test.yaml
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-build
+      cancel-in-progress: true
 
   build-and-push:
     needs: [ vars, test ]

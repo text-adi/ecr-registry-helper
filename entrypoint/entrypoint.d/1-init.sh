@@ -27,11 +27,6 @@ if [ -z "${AWS_ACCOUNT}" ]; then
   exit 1
 fi
 
-if [ -z "${ECR_TOKEN}" ]; then
-  echo "ECR_TOKEN not set. Exit..."
-  exit 1
-fi
-
 if [ -z "${AWS_ACCESS_KEY_ID}" ]; then
   echo "AWS_ACCESS_KEY_ID not set. Exit..."
   exit 1

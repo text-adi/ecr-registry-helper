@@ -8,7 +8,7 @@ echo "Starting..."
 
 for file in /entrypoint.d/*; do
   if [ -f "$file" ]; then
-    if [ -n "${DEBUG}" ]; then
+      if [ -n "${DEBUG}" ]; then
       echo "** Execute - $file **"
     fi
 
